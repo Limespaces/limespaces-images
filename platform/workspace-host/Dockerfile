@@ -49,7 +49,7 @@ RUN mv /usr/bin/sysbox-runc /usr/bin/sysbox-runc.real
 COPY ./sysbox-runc-wrapper.sh /usr/bin/sysbox-runc
 RUN chmod +x /usr/bin/sysbox-runc
 RUN mkdir -p /etc/docker && \
-    echo '{"runtimes":{"sysbox-runc":{"path":"/usr/bin/sysbox-runc"}}}' > /etc/docker/daemon.json
+    echo '{"runtimes":{"sysbox-runc":{"path":"/usr/bin/sysbox-runc"}},"insecure-registries":["limespaces-registry:5000","registry:5000"]}' > /etc/docker/daemon.json
 
 # Create container directory for sharing docker socket
 # Creating outside /run (tmpfs) prevents systemd issues

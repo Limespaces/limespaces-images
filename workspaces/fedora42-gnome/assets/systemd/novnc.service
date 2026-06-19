@@ -1,0 +1,10 @@
+[Unit]
+Description=NoVNC proxy
+After=network.target
+
+[Service]
+ExecStart=/usr/sbin/novnc_proxy --listen 6901 --vnc localhost:5901
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
