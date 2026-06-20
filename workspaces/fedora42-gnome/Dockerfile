@@ -19,6 +19,7 @@ RUN --mount=type=cache,target=/var/cache/libdnf5 \
     dnf -y --setopt=keepcache=True install \
         gnome-shell \
         gnome-session \
+        gnome-menus \
         #mutter \
         gnome-session-xsession \
         gsettings-desktop-schemas \
@@ -42,13 +43,22 @@ RUN --mount=type=cache,target=/var/cache/libdnf5 \
         gobject-introspection-devel \
         glib2-devel
 
+# Raise systemd task limits (default is too low)
+RUN mkdir -p /etc/systemd/system.conf.d /etc/systemd/user.conf.d /etc/systemd/logind.conf.d /etc/systemd/system/user-.slice.d && \
+    printf '[Manager]\nDefaultTasksMax=infinity\n' > /etc/systemd/system.conf.d/tasks.conf && \
+    printf '[Manager]\nDefaultTasksMax=infinity\n' > /etc/systemd/user.conf.d/tasks.conf && \
+    printf '[Login]\nUserTasksMax=infinity\n' > /etc/systemd/logind.conf.d/tasks.conf && \
+    printf '[Slice]\nTasksMax=infinity\n' > /etc/systemd/system/user-.slice.d/tasks.conf
+
 # Copy journal config
 COPY assets/systemd/journald.conf /etc/systemd/journald.conf
 
 # Create user
 RUN useradd -u 1000 -g 0 -m -d /home/${W_USERNAME} ${W_USERNAME} && \
     usermod -aG wheel ${W_USERNAME} && \
-    echo "${W_PASSWORD}" | passwd --stdin ${W_USERNAME}
+    echo "${W_PASSWORD}" | passwd --stdin ${W_USERNAME} && \
+    echo "${W_USERNAME} ALL=(ALL) ALL" > /etc/sudoers.d/${W_USERNAME} && \
+    chmod 440 /etc/sudoers.d/${W_USERNAME}
 
 # Copy dbus broker config
 COPY assets/systemd/dbus-broker-override.conf /etc/systemd/system/dbus-broker.service.d/override.conf
@@ -100,12 +110,10 @@ RUN --mount=type=cache,target=/var/cache/libdnf5 \
       kitty \
       firefox
 
-# Configure gnome
 COPY assets/glib-schemas/wallpaper.override /usr/share/glib-2.0/schemas/10_local-wallpaper.gschema.override
 COPY assets/glib-schemas/accessibility.override /usr/share/glib-2.0/schemas/10_local-accessibility.gschema.override
+COPY assets/glib-schemas/performance.override /usr/share/glib-2.0/schemas/10_local-performance.gschema.override
 COPY wallpaper.jpg /usr/share/backgrounds/wallpaper.jpg
-
-RUN glib-compile-schemas /usr/share/glib-2.0/schemas/
 
 # Copy and enable novnc service
 COPY assets/systemd/novnc.service /etc/systemd/system/novnc.service
