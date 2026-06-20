@@ -111,8 +111,5 @@ RUN glib-compile-schemas /usr/share/glib-2.0/schemas/
 COPY assets/systemd/novnc.service /etc/systemd/system/novnc.service
 RUN systemctl enable novnc.service
 
-# Expose ports
-EXPOSE 5901 6901 3000
-
 # Use systemd to start the session
 CMD ["/sbin/init"]
