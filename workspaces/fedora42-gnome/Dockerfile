@@ -112,8 +112,10 @@ RUN --mount=type=cache,target=/var/cache/libdnf5 \
 
 COPY assets/glib-schemas/wallpaper.override /usr/share/glib-2.0/schemas/10_local-wallpaper.gschema.override
 COPY assets/glib-schemas/accessibility.override /usr/share/glib-2.0/schemas/10_local-accessibility.gschema.override
-COPY assets/glib-schemas/performance.override /usr/share/glib-2.0/schemas/10_local-performance.gschema.override
+#COPY assets/glib-schemas/performance.override /usr/share/glib-2.0/schemas/10_local-performance.gschema.override
 COPY wallpaper.jpg /usr/share/backgrounds/wallpaper.jpg
+
+RUN glib-compile-schemas /usr/share/glib-2.0/schemas/
 
 # Copy and enable novnc service
 COPY assets/systemd/novnc.service /etc/systemd/system/novnc.service
