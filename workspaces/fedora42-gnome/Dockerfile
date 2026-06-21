@@ -41,7 +41,8 @@ RUN --mount=type=cache,target=/var/cache/libdnf5 \
         gcc-c++ \
         make \
         gobject-introspection-devel \
-        glib2-devel
+        glib2-devel \
+        zenity
 
 # Raise systemd task limits (default is too low)
 RUN mkdir -p /etc/systemd/system.conf.d /etc/systemd/user.conf.d /etc/systemd/logind.conf.d /etc/systemd/system/user-.slice.d && \
@@ -117,9 +118,10 @@ COPY wallpaper.jpg /usr/share/backgrounds/wallpaper.jpg
 
 RUN glib-compile-schemas /usr/share/glib-2.0/schemas/
 
-# Copy and enable novnc service
+# Copy and enable systemd services
 COPY assets/systemd/novnc.service /etc/systemd/system/novnc.service
-RUN systemctl enable novnc.service
+COPY assets/systemd/limespaces-supervisor.service /etc/systemd/system/limespaces-supervisor.service
+RUN systemctl enable novnc.service limespaces-supervisor.service
 
 # Use systemd to start the session
 CMD ["/sbin/init"]
