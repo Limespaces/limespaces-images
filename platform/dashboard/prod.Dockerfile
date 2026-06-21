@@ -17,12 +17,14 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 
 COPY . .
 
+# Set working directory to the dashboard package
+WORKDIR /app/repos/dashboard
 
 # Build shared library first
 RUN pnpm --filter @limespaces/shared build
 
-# Set working directory to the dashboard package
-WORKDIR /app/repos/dashboard
+# Build the application
+RUN pnpm run build
 
 ENV NODE_ENV=production
 
