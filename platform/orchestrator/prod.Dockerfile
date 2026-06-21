@@ -20,6 +20,13 @@ COPY . .
 # Set working directory to the orchestrator package
 WORKDIR /app/repos/orchestrator
 
+# Build the application
+RUN pnpm run build
+
+# Copy entrypoint script
+COPY repos/images/platform/orchestrator/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
 ENV NODE_ENV=production
 
-CMD ["pnpm", "run", "start:prod"]
+ENTRYPOINT ["/entrypoint.sh"]
