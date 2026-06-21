@@ -23,8 +23,8 @@ WORKDIR /app/repos/dashboard
 # Build shared library first
 RUN pnpm --filter @limespaces/shared build
 
-# Build the application
-RUN pnpm run build
+# Build the application using a temporary bind mount on env
+RUN --mount=type=bind,source=env/dashboard.env,target=/app/repos/dashboard/.env pnpm run build
 
 ENV NODE_ENV=production
 
