@@ -58,6 +58,7 @@ COPY assets/systemd/journald.conf /etc/systemd/journald.conf
 RUN useradd -u 1000 -g 0 -m -d /home/${W_USERNAME} ${W_USERNAME} && \
     usermod -aG wheel ${W_USERNAME} && \
     echo "${W_USERNAME}:${W_PASSWORD}" | chpasswd && \
+    chmod 0600 /etc/shadow && \
     echo "${W_USERNAME} ALL=(ALL) ALL" > /etc/sudoers.d/${W_USERNAME} && \
     chmod 440 /etc/sudoers.d/${W_USERNAME} && \
     find /etc/pam.d/ -type f -exec sed -i 's/session\s*required\s*pam_loginuid.so/session optional pam_loginuid.so/g' {} +
@@ -114,6 +115,7 @@ RUN --mount=type=cache,target=/var/cache/libdnf5 \
 
 COPY assets/glib-schemas/wallpaper.override /usr/share/glib-2.0/schemas/10_local-wallpaper.gschema.override
 COPY assets/glib-schemas/accessibility.override /usr/share/glib-2.0/schemas/10_local-accessibility.gschema.override
+COPY assets/glib-schemas/lockscreen.override /usr/share/glib-2.0/schemas/10_local-lockscreen.gschema.override
 #COPY assets/glib-schemas/performance.override /usr/share/glib-2.0/schemas/10_local-performance.gschema.override
 COPY wallpaper.jpg /usr/share/backgrounds/wallpaper.jpg
 
