@@ -1,5 +1,7 @@
 providers:
-  docker: {}
+  docker:
+    exposedByDefault: false
+    constraints: "Label(`traefik.group`, `limespaces`)"
 
 api:
   insecure: false
