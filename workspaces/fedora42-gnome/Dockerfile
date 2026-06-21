@@ -57,9 +57,10 @@ COPY assets/systemd/journald.conf /etc/systemd/journald.conf
 # Create user
 RUN useradd -u 1000 -g 0 -m -d /home/${W_USERNAME} ${W_USERNAME} && \
     usermod -aG wheel ${W_USERNAME} && \
-    echo "${W_PASSWORD}" | passwd --stdin ${W_USERNAME} && \
+    echo "${W_USERNAME}:${W_PASSWORD}" | chpasswd && \
     echo "${W_USERNAME} ALL=(ALL) ALL" > /etc/sudoers.d/${W_USERNAME} && \
-    chmod 440 /etc/sudoers.d/${W_USERNAME}
+    chmod 440 /etc/sudoers.d/${W_USERNAME} && \
+    find /etc/pam.d/ -type f -exec sed -i 's/session\s*required\s*pam_loginuid.so/session optional pam_loginuid.so/g' {} +
 
 # Copy dbus broker config
 COPY assets/systemd/dbus-broker-override.conf /etc/systemd/system/dbus-broker.service.d/override.conf
