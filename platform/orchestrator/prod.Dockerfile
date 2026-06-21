@@ -17,6 +17,9 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 
 COPY . .
 
+# Build shared library first
+RUN pnpm --filter @limespaces/shared build
+
 # Set working directory to the orchestrator package
 WORKDIR /app/repos/orchestrator
 
